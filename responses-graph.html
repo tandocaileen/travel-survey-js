@@ -141,7 +141,119 @@
 
         .chart-wrap {
             position: relative;
-            max-height: 320px
+            max-height: 340px
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            align-items: center
+        }
+
+        .view-toggle span {
+            font-weight: 700;
+            font-size: .85rem;
+            color: var(--muted);
+            margin-right: 4px
+        }
+
+        .view-btn {
+            background: #fff;
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 7px 18px;
+            border-radius: 20px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: .85rem;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .view-btn.active {
+            background: var(--coral);
+            border-color: var(--coral);
+            color: #fff
+        }
+
+        .view-btn:hover:not(.active) {
+            border-color: var(--coral);
+            color: var(--coral)
+        }
+
+        /* Ranking view */
+        .ranking-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .rank-item {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .rank-num {
+            font-size: .95rem;
+            font-weight: 900;
+            color: var(--muted);
+            min-width: 26px;
+            text-align: right
+        }
+
+        .rank-num.gold {
+            color: #e6ac00
+        }
+
+        .rank-num.silver {
+            color: #909090
+        }
+
+        .rank-num.bronze {
+            color: #b5651d
+        }
+
+        .rank-bar-wrap {
+            flex: 1;
+            background: var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            height: 28px;
+            position: relative
+        }
+
+        .rank-bar-fill {
+            height: 100%;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+            font-size: .8rem;
+            font-weight: 800;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            min-width: 4px;
+            transition: width .5s ease
+        }
+
+        .rank-label {
+            font-size: .82rem;
+            font-weight: 700;
+            color: var(--text);
+            min-width: 60px;
+            text-align: right;
+            white-space: nowrap
+        }
+
+        /* Pie wrap */
+        .pie-wrap {
+            position: relative;
+            max-width: 380px;
+            margin: 0 auto
         }
 
         .empty {
@@ -191,10 +303,165 @@
 
     <script>
         const COLORS = [
-            "rgba(255,107,107,.8)", "rgba(255,217,61,.8)", "rgba(107,203,119,.8)",
-            "rgba(116,192,252,.8)", "rgba(201,177,255,.8)", "rgba(255,159,100,.8)",
-            "rgba(99,207,188,.8)", "rgba(255,134,172,.8)",
+            "#FF6B6B", "#FFD93D", "#6BCB77",
+            "#74C0FC", "#C9B1FF", "#FF9F64",
+            "#63CFbc", "#FF86AC", "#A9E34B", "#FF922B"
         ];
+        const COLORS_ALPHA = COLORS.map(c => c + "CC");
+
+        let currentView = 'bar';
+        let allTallies = {};
+        let chartInstances = {};
+
+        function rankColor(i) {
+            return ["#e6ac00", "#909090", "#b5651d"][i] || COLORS[i % COLORS.length];
+        }
+
+        function renderBarChart(idx, labels, data, colors) {
+            const canvas = document.createElement('canvas');
+            canvas.id = `chart-${idx}`;
+            const wrap = document.createElement('div');
+            wrap.className = 'chart-wrap';
+            wrap.appendChild(canvas);
+
+            if (chartInstances[idx]) { chartInstances[idx].destroy(); delete chartInstances[idx]; }
+
+            const horizontal = labels.length > 4;
+            chartInstances[idx] = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        data,
+                        backgroundColor: colors,
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    indexAxis: horizontal ? 'y' : 'x',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.x ?? ctx.parsed.y} vote${(ctx.parsed.x ?? ctx.parsed.y) !== 1 ? 's' : ''}` } }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#f5ede3' },
+                            ticks: { font: { family: 'Nunito', weight: '600' } },
+                            ...(horizontal ? {} : { ticks: { font: { family: 'Nunito', weight: '600' } } })
+                        },
+                        y: {
+                            grid: { color: '#f5ede3' },
+                            ticks: { font: { family: 'Nunito', weight: '600' } }
+                        }
+                    }
+                }
+            });
+            return wrap;
+        }
+
+        function renderPieChart(idx, labels, data, colors) {
+            const canvas = document.createElement('canvas');
+            canvas.id = `chart-${idx}`;
+            const wrap = document.createElement('div');
+            wrap.className = 'pie-wrap';
+            wrap.appendChild(canvas);
+
+            if (chartInstances[idx]) { chartInstances[idx].destroy(); delete chartInstances[idx]; }
+
+            const total = data.reduce((a, b) => a + b, 0);
+            chartInstances[idx] = new Chart(canvas, {
+                type: 'doughnut',
+                data: {
+                    labels,
+                    datasets: [{ data, backgroundColor: colors, borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    cutout: '45%',
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: { font: { family: 'Nunito', weight: '700', size: 12 }, padding: 14, boxWidth: 14 }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => {
+                                    const v = ctx.parsed;
+                                    const pct = total ? Math.round(v / total * 100) : 0;
+                                    return ` ${v} vote${v !== 1 ? 's' : ''} (${pct}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            return wrap;
+        }
+
+        function renderRanking(labels, data, colors) {
+            const total = data.reduce((a, b) => a + b, 0);
+            const sorted = labels.map((l, i) => ({ label: l, count: data[i], color: colors[i] }))
+                .sort((a, b) => b.count - a.count);
+            const maxCount = sorted[0]?.count || 1;
+
+            const div = document.createElement('div');
+            div.className = 'ranking-list';
+
+            sorted.forEach((item, i) => {
+                const pct = total ? Math.round(item.count / total * 100) : 0;
+                const barPct = Math.round(item.count / maxCount * 100);
+                const numClass = i === 0 ? 'rank-num gold' : i === 1 ? 'rank-num silver' : i === 2 ? 'rank-num bronze' : 'rank-num';
+                const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;
+
+                const row = document.createElement('div');
+                row.className = 'rank-item';
+                row.innerHTML = `
+                    <div class="${numClass}">${medal}</div>
+                    <div class="rank-bar-wrap" title="${item.label}">
+                        <div class="rank-bar-fill" style="width:${barPct}%;background:${item.color}">
+                            ${barPct > 20 ? item.label : ''}
+                        </div>
+                        ${barPct <= 20 ? `<span style="position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:.78rem;font-weight:700;color:var(--text)">${item.label}</span>` : ''}
+                    </div>
+                    <div class="rank-label">${item.count} vote${item.count !== 1 ? 's' : ''}<br/><span style="color:var(--muted);font-size:.75rem">${pct}%</span></div>
+                `;
+                div.appendChild(row);
+            });
+            return div;
+        }
+
+        function renderAllCards(view) {
+            currentView = view;
+            document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+
+            document.querySelectorAll('.chart-body').forEach(body => {
+                const idx = +body.dataset.idx;
+                const question = body.dataset.question;
+                const counts = allTallies[question];
+                if (!counts) return;
+
+                const labels = Object.keys(counts);
+                const data = Object.values(counts);
+                const colors = labels.map((_, i) => COLORS[i % COLORS.length]);
+
+                // destroy old chart if exists
+                if (chartInstances[idx]) { chartInstances[idx].destroy(); delete chartInstances[idx]; }
+                body.innerHTML = '';
+
+                if (view === 'bar') {
+                    body.appendChild(renderBarChart(idx, labels, data, colors));
+                } else if (view === 'pie') {
+                    body.appendChild(renderPieChart(idx, labels, data, colors));
+                } else {
+                    body.appendChild(renderRanking(labels, data, colors));
+                }
+            });
+        }
 
         async function load() {
             const main = document.getElementById('main');
@@ -212,43 +479,67 @@
                     return;
                 }
 
-                // Tally
+                // Tally — skip null, undefined, empty, and literal "undefined"/"null"
+                const SKIP = new Set(['', 'undefined', 'null', 'n/a', '-']);
                 const tallies = {};
                 const names = [];
                 for (const entry of responses) {
                     names.push(entry['__name__'] || 'Anonymous');
                     for (const [key, val] of Object.entries(entry)) {
                         if (key.startsWith('_') || key === '__name__') continue;
+                        if (val == null) continue;
                         if (!tallies[key]) tallies[key] = {};
                         for (const part of String(val).split(', ')) {
                             const p = part.trim();
-                            if (p) tallies[key][p] = (tallies[key][p] || 0) + 1;
+                            if (p && !SKIP.has(p.toLowerCase())) {
+                                tallies[key][p] = (tallies[key][p] || 0) + 1;
+                            }
                         }
                     }
                 }
 
+                // Remove questions with no valid answers
+                for (const key of Object.keys(tallies)) {
+                    if (Object.keys(tallies[key]).length === 0) delete tallies[key];
+                }
+
+                allTallies = tallies;
                 main.innerHTML = '';
 
                 // Stats
                 const stats = document.createElement('div');
                 stats.className = 'summary';
                 stats.innerHTML = `
-      <div class="stat-card">
-        <div class="stat-num">${total}</div>
-        <div class="stat-label">Total Responses</div>
-      </div>
-      <div class="stat-card" style="border-top-color:#6BCB77">
-        <div class="stat-num">${Object.keys(tallies).length}</div>
-        <div class="stat-label">Questions Answered</div>
-      </div>
-      <div class="stat-card" style="border-top-color:#74C0FC;flex:2">
-        <div class="stat-label" style="margin-bottom:6px">Respondents</div>
-        <div class="respondents">${names.join(' · ')}</div>
-      </div>
-    `;
+                    <div class="stat-card">
+                        <div class="stat-num">${total}</div>
+                        <div class="stat-label">Total Responses</div>
+                    </div>
+                    <div class="stat-card" style="border-top-color:#6BCB77">
+                        <div class="stat-num">${Object.keys(tallies).length}</div>
+                        <div class="stat-label">Questions Answered</div>
+                    </div>
+                    <div class="stat-card" style="border-top-color:#74C0FC;flex:2">
+                        <div class="stat-label" style="margin-bottom:6px">Respondents</div>
+                        <div class="respondents">${names.join(' · ')}</div>
+                    </div>
+                `;
                 main.appendChild(stats);
 
-                // Charts
+                // View toggle
+                const toggle = document.createElement('div');
+                toggle.className = 'view-toggle';
+                toggle.innerHTML = `
+                    <span>View:</span>
+                    <button class="view-btn active" data-view="bar">📊 Bar</button>
+                    <button class="view-btn" data-view="pie">🥧 Pie</button>
+                    <button class="view-btn" data-view="ranking">🏆 Ranking</button>
+                `;
+                toggle.querySelectorAll('.view-btn').forEach(btn => {
+                    btn.addEventListener('click', () => renderAllCards(btn.dataset.view));
+                });
+                main.appendChild(toggle);
+
+                // Build cards (empty bodies, filled by renderAllCards)
                 Object.entries(tallies).forEach(([question, counts], idx) => {
                     const labels = Object.keys(counts);
                     const data = Object.values(counts);
@@ -256,30 +547,16 @@
 
                     const card = document.createElement('div');
                     card.className = 'chart-card';
-                    card.innerHTML = `<h2>${question}</h2><div class="chart-wrap"><canvas id="chart-${idx}"></canvas></div>`;
+                    const body = document.createElement('div');
+                    body.className = 'chart-body';
+                    body.dataset.idx = idx;
+                    body.dataset.question = question;
+                    card.innerHTML = `<h2>${question}</h2>`;
+                    card.appendChild(body);
                     main.appendChild(card);
-
-                    new Chart(document.getElementById(`chart-${idx}`), {
-                        type: 'bar',
-                        data: {
-                            labels,
-                            datasets: [{ data, backgroundColor: colors, borderRadius: 8, borderSkipped: false }]
-                        },
-                        options: {
-                            indexAxis: labels.length > 4 ? 'y' : 'x',
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.x ?? ctx.parsed.y} vote${(ctx.parsed.x ?? ctx.parsed.y) !== 1 ? 's' : ''}` } }
-                            },
-                            scales: {
-                                x: { grid: { color: '#f5ede3' }, ticks: { font: { family: 'Nunito', weight: '600' } } },
-                                y: { grid: { color: '#f5ede3' }, ticks: { font: { family: 'Nunito', weight: '600' } } }
-                            }
-                        }
-                    });
                 });
+
+                renderAllCards('bar');
 
             } catch (err) {
                 main.innerHTML = `<div class="empty">⚠️ Could not load responses.<br/><small>${err.message}</small></div>`;

@@ -1,0 +1,50 @@
+name: Survey CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  # ── Lint & validate static files ──────────────────────────────
+  lint:
+    name: Lint HTML / JS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install linters
+        run: npm install --no-save htmlhint eslint
+
+      - name: Lint HTML
+        run: npx htmlhint index.html
+
+      - name: Lint JavaScript
+        run: npx eslint js/survey.js --no-eslintrc -c '{"env":{"browser":true,"es2020":true},"parserOptions":{"ecmaVersion":2020},"rules":{"no-undef":"warn","no-unused-vars":"warn"}}'
+
+  # ── Python server tests ────────────────────────────────────────
+  test-server:
+    name: Test Python Server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install flask pytest -r requirements.txt
+
+      - name: Run server tests
+        run: pytest tests/ -v --tb=short
+        # Tests are in tests/test_server.py (created alongside this workflow)

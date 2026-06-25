@@ -1,0 +1,30 @@
+[
+  {
+    "__name__": "Ai",
+    "[Preferred Travel Dates] Are these dates okay for you?": "Yes",
+    "[Preferred Travel Dates] Maximum vacation leaves you are willing to use?": "6",
+    "[Budget] What is your maximum comfortable TOTAL budget for this trip? *(Excluding personal shopping/pasalubong)*": "₱50,000–₱70,000",
+    "[Budget] Maximum airfare budget you're willing to pay?": "Whatever is needed",
+    "[Budget] Are you willing to book immediately if a good sale appears?": "Depends on price",
+    "[Preferred Itinerary] Which itinerary do you prefer?": "No preference",
+    "[Preferred Itinerary] Rank the itineraries from most preferred to least preferred.": "Basta naay Sapa og Hanoi hahahahaha",
+    "[Must Visit Attractions] General": "Shopping, Food Trip, Cafés, Sightseeing, Photography, Relaxing/Slow Travel",
+    "[Must Visit Attractions] Hanoi": "Old Quarter, Train Street, Egg Coffee, Shopping Districts, Café Hopping, Local Street Food",
+    "[Must Visit Attractions] Sapa": "Fansipan, Moana Viewpoint, Mountain Cafés, Cable Car Experience",
+    "[Must Visit Attractions] Da Nang / Hoi An": "Ba Na Hills, Alpine Coaster, Hoi An Ancient Town, Hoi An Lantern Streets, Han Market",
+    "[Must Visit Attractions] Ha Long Bay": "Day Cruise",
+    "[Must Visit Attractions] Ho Chi Minh": "Café Apartments, Shopping Malls, Food Trip",
+    "[Transportation] Do you get motion sickness?": "Slightly",
+    "[Transportation] Which transportation options are you comfortable with? *Hanoi -> Da Nang or Ho Chi Minh* **": "Airplane",
+    "[Transportation] Preferred transportation style": "Fastest possible",
+    "[Accommodation] What type of accommodation are you comfortable with?": "Any",
+    "[Travel Style] Select all that apply": "Food Trip, Café Hopping, Shopping, Relaxed Itinerary, Night Markets, Anime Stores, Pop Mart, Luxury Experiences, Unique Experiences, Social Media / Instagram Spots, Souvenir Hunting",
+    "[Non-Negotiables] What are your non-negotiables for this trip?": "Must have free time, Must include shopping, Must include food trip, Must include cafés",
+    "[Flights & Baggage] Will you bring checked baggage?": "Yes",
+    "[Flights & Baggage] Preferred airline type": "Cheapest possible",
+    "[Flights & Baggage] Preferred Flight Time": "Depends on duration and price",
+    "[Flights & Baggage] Are you interested in a Singapore layover?": "Yes",
+    "[Final Decision] If flight prices suddenly increase, what should be prioritized?": "Convenience",
+    "_submitted_at": "2026-06-25T13:20:44.640799"
+  }
+]

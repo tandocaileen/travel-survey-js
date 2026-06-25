@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Survey</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Pacifico&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+    <!-- Hero Banner -->
+    <header class="hero">
+        <div class="hero-deco hero-deco--left" id="hero-deco-left"></div>
+        <div class="hero-content">
+            <p class="hero-flag" id="hero-flag"></p>
+            <h1 class="hero-title" id="hero-title"></h1>
+            <p class="hero-subtitle" id="hero-subtitle"></p>
+        </div>
+        <div class="hero-deco hero-deco--right" id="hero-deco-right"></div>
+        <div class="hero-wave">
+            <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#fff9f0" />
+            </svg>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- Respondent Name -->
+        <div class="name-card">
+            <label class="name-label" for="respondent-name">
+                <span class="name-icon">👤</span> <span id="name-label-text"></span>
+            </label>
+            <input type="text" id="respondent-name" placeholder="" class="name-input" autocomplete="off" />
+        </div>
+
+        <!-- Survey Sections injected here -->
+        <div id="survey-form">
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading survey…</p>
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="submit-area">
+            <button id="submit-btn" class="submit-btn" disabled>
+                <span class="submit-icon" id="submit-icon"></span>
+                <span class="submit-label">Submit My Answers!</span>
+            </button>
+            <p class="submit-hint" id="submit-hint"></p>
+        </div>
+
+    </main>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-backdrop" onclick="closeModal()"></div>
+        <div class="modal-box">
+            <div class="modal-emoji" id="modal-emoji"></div>
+            <h2 id="modal-title" class="modal-title"></h2>
+            <p class="modal-body" id="modal-body"></p>
+            <button class="modal-close-btn" id="modal-button" onclick="closeModal()"></button>
+        </div>
+    </div>
+
+    <script src="js/survey.js"></script>
+
+    <!-- Responses graph shortcut -->
+    <a href="/responses-graph" class="graph-fab" title="View response graphs" aria-label="View response graphs">📊</a>
+
+</body>
+
+</html>

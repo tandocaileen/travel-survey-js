@@ -20,3 +20,4 @@ env/
 .vscode/
 *.swp
 *.swo
+server.py

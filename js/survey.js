@@ -305,42 +305,6 @@ function collectAnswers(survey) {
     return data;
 }
 
-// Format Email Body (HTML)
-function formatEmailBody(answers, surveyTitle) {
-    const name = answers['__name__'];
-    let html = `
-    <div style="font-family:sans-serif;max-width:640px;margin:0 auto;color:#333">
-      <h1 style="color:#e74c3c;font-size:1.6rem">🌏 ${surveyTitle}</h1>
-      <p style="color:#666">Response from: <strong>${name}</strong></p>
-      <hr style="border:none;border-top:1px solid #eee;margin:16px 0" />
-  `;
-
-    let lastSection = '';
-    Object.entries(answers).forEach(([key, val]) => {
-        if (key === '__name__') return;
-
-        // Extract section name from key like "[Section] Question"
-        const sectionMatch = key.match(/^\[(.+?)\]\s*/);
-        const sectionName = sectionMatch ? sectionMatch[1] : '';
-        const questionText = sectionMatch ? key.slice(sectionMatch[0].length) : key;
-
-        if (sectionName !== lastSection) {
-            html += `<h2 style="font-size:1.05rem;color:#c0392b;margin-top:24px;margin-bottom:8px;border-left:4px solid #e74c3c;padding-left:10px">${sectionName}</h2>`;
-            lastSection = sectionName;
-        }
-
-        html += `
-      <div style="margin-bottom:12px;padding:10px 14px;background:#fafafa;border-radius:8px">
-        <p style="font-weight:700;margin:0 0 4px;font-size:.9rem">${questionText}</p>
-        <p style="margin:0;color:#555;font-size:.9rem">${val.replace(/\n/g, '<br/>')}</p>
-      </div>
-    `;
-    });
-
-    html += '</div>';
-    return html;
-}
-
 // Utility
 function escapeAttr(str) {
     return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -439,7 +403,8 @@ document.getElementById('submit-btn').addEventListener('click', async () => {
     }
 });
 
-// Modal Close
+// closeModal is called from index.html onclick attributes
+/* eslint-disable-next-line no-unused-vars */
 function closeModal() {
     document.getElementById('success-modal').classList.add('hidden');
 }

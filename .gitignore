@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Survey responses (local data — do not commit)
+responses.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+*.swp
+*.swo

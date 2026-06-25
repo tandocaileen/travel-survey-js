@@ -21,13 +21,13 @@ jobs:
           node-version: "20"
 
       - name: Install linters
-        run: npm install --no-save htmlhint eslint
+        run: npm install --no-save htmlhint eslint@8
 
       - name: Lint HTML
         run: npx htmlhint index.html
 
       - name: Lint JavaScript
-        run: npx eslint js/survey.js --no-eslintrc -c '{"env":{"browser":true,"es2020":true},"parserOptions":{"ecmaVersion":2020},"rules":{"no-undef":"warn","no-unused-vars":"warn"}}'
+        run: npx eslint js/survey.js
 
   # ── Python server tests ────────────────────────────────────────
   test-server:

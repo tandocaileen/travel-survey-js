@@ -1,0 +1,16 @@
+{
+    "rewrites": [
+        {
+            "source": "/submit",
+            "destination": "/api/submit"
+        },
+        {
+            "source": "/responses",
+            "destination": "/api/responses"
+        },
+        {
+            "source": "/responses-graph",
+            "destination": "/responses-graph.html"
+        }
+    ]
+}
